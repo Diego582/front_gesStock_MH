@@ -1,6 +1,7 @@
-const port = import.meta.env.VITE_REACT_APP_PORT;
+
+const apiUrl = import.meta.env.VITE_API_URL;
 
 
-const apiUrl = `https://gesstock.local:${port}/api/`;
+
 
 export default apiUrl;
