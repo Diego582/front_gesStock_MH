@@ -15,15 +15,17 @@ import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
 import { Link } from "react-router-dom";
 
-export default function MenuBar() {
+export default function MenuBar({ onClose }) {
   const categories = ["Ventas", "Compras", "Clientes", "Productos", "Reportes"];
 
   return (
     <Box
       sx={{
         backgroundColor: "primary.main",
-        height: "90vh",
-        width: "5vw",
+        height: "100vh",
+        width: { xs: "200px", sm: "60px", md: "5vw" },
+        minWidth: { sm: "60px", md: "70px" },
+        overflow: "hidden",
         color: "white",
         display: "flex",
         flexDirection: "column",
@@ -32,7 +34,7 @@ export default function MenuBar() {
     >
       <List>
         {categories.map((text, index) => (
-          <ListItem key={index} disablePadding>
+          <ListItem key={index} disablePadding onClick={onClose}>
             <Link to={text.toLowerCase()} style={{ textDecoration: "none" }}>
               <ListItemButton>
                 <Tooltip title={text}>
@@ -56,7 +58,7 @@ export default function MenuBar() {
         ))}
       </List>
       <List>
-        <ListItem>
+        <ListItem onClick={onClose}>
           <ListItemIcon sx={{ pt: 2, pb: 2 }}>
             <Tooltip title="Salir">
               <ExitToAppIcon sx={{ color: "white" }} />

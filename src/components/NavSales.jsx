@@ -28,9 +28,9 @@ export default function NavSales() {
               <Tooltip title={text}>
                 <IconButton sx={{}}>
                   {text === "Remitos" ? (
-                    <FactCheckIcon sx={{ color: "white" }} />
+                    <FactCheckIcon sx={{ color: "secondary.main" }} />
                   ) : (
-                    <CastConnectedIcon sx={{ color: "white" }} />
+                    <CastConnectedIcon sx={{ color: "secondary.main" }} />
                   )}
                 </IconButton>
               </Tooltip>

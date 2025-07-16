@@ -8,37 +8,37 @@ import store from "./store/store";
 const theme = createTheme({
   palette: {
     primary: {
-      main: "#40273d",
+      main: "#2C3E50",       // Azul acero: profesionalismo, fuerza
     },
     secondary: {
-      main: "#586155",
+      main: "#E67E22",       // Naranja construcción: energía, acción
     },
     tertiary: {
-      main: "#96413E",
+      main: "#F4F4F4",       // Gris claro: fondo general
     },
     fourth: {
-      main: "#F8F8F8",
+      main: "#EDEDED",       // Fondo alternativo: más contraste con texto
     },
     textFielfWhite: {
-      main: "#ffffff",
+      main: "#FFFFFF",       // Blanco puro para campos y contraste limpio
     },
     colorsCards: {
-      main: "#3EF029",
+      main: "#BDC3C7",       // Gris hormigón: neutro, para tarjetas y contenedores
     },
     primarySignup: {
-      main: "#72733B",
+      main: "#5D6D2B",       // Verde oliva oscuro: asociado a confianza y estabilidad
     },
     secondarySignup: {
-      main: "#D9B218",
+      main: "#D4AC0D",       // Amarillo maquinaria: acento fuerte para formularios
     },
     error: {
-      main: "#F0625D",
+      main: "#C0392B",       // Rojo ladrillo: más sobrio y acorde al rubro
     },
     success: {
-      main: "#5DF091",
+      main: "#27AE60",       // Verde confianza: confirma acciones con claridad
     },
     info: {
-      main: "#5DAEF0",
+      main: "#3498DB",       // Azul constructivo: para datos o links informativos
     },
   },
 });
