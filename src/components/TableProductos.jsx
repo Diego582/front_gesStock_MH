@@ -13,6 +13,8 @@ import {
   TableRow,
   TextField,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -33,6 +35,8 @@ export default function TableProductos({ openCreate, setOpenCreate }) {
   const [codigoBarras, setCodigoBarras] = useState({});
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const columns = [
     {
@@ -79,70 +83,82 @@ export default function TableProductos({ openCreate, setOpenCreate }) {
   return (
     <>
       {data && data.length > 0 ? (
-        <TableContainer sx={{ maxHeight: "70vh" }}>
-          <Table stickyHeader>
-            <TableHead>
-              <TableRow>
-                {columns.map((column, index) => {
-                  return (
-                    <TableCell key={index} sx={{ p: 2 }}>
-                      {column.headerName}
+        <Box
+          sx={{
+            overflowX: isMobile ? "auto" : "unset",
+            borderRadius: 2,
+            boxShadow: 1,
+          }}
+        >
+          <TableContainer
+            sx={{
+              maxHeight: "65vh",
+              overflowY: "auto",
+              minWidth: isMobile ? "600px" : "auto",
+            }}
+          >
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  {columns.map((col, i) => (
+                    <TableCell key={i} sx={{ fontWeight: "bold", p: 2 }}>
+                      {col.headerName}
                     </TableCell>
-                  );
-                })}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {data.map((item, index) => {
-                return (
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {data.map((item, index) => (
                   <TableRow
-                    sx={{
-                      borderRadius: "10px",
-                      backgroundColor:
-                        index % 2 === 0 ? "rgba(157, 85, 82, 0.3)" : "white",
-                    }}
                     key={index}
+                    sx={{
+                      backgroundColor:
+                        index % 2 === 0 ? "rgba(157, 85, 82, 0.05)" : "white",
+                    }}
                   >
-                    {columns.map((column, colIndex) => {
-                      if (column.field == "prices") {
+                    {columns.map((col, j) => {
+                      if (col.field === "prices") {
                         return (
-                          <TableCell key={colIndex} sx={{ p: 0, pl: 2 }}>
-                            {"$ "}
-                            {item.prices[0].value &&
-                              item.prices[0].value.toFixed(2)}
+                          <TableCell key={j} sx={{ p: 1 }}>
+                            ${" "}
+                            {item.prices?.[0]?.value
+                              ? item.prices[0].value.toFixed(2)
+                              : "-"}
                           </TableCell>
                         );
                       }
-                      if (column.field != "actions") {
+                      if (col.field === "actions") {
                         return (
-                          <TableCell key={colIndex} sx={{ p: 0, pl: 2 }}>
-                            {item[column.field]}
+                          <TableCell key={j}>
+                            <IconButton
+                              onClick={() => handleSelected(item, "Edit")}
+                            >
+                              <EditIcon color="info" />
+                            </IconButton>
+                            <IconButton
+                              onClick={() => handleSelected(item, "Delete")}
+                            >
+                              <DeleteIcon color="error" />
+                            </IconButton>
                           </TableCell>
                         );
                       }
+                      return (
+                        <TableCell key={j} sx={{ p: 1 }}>
+                          {item[col.field]}
+                        </TableCell>
+                      );
                     })}
-                    <TableCell>
-                      <Box>
-                        <IconButton
-                          onClick={() => handleSelected(item, "Edit")}
-                        >
-                          <EditIcon color="info" />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleSelected(item, "Delete")}
-                        >
-                          <DeleteIcon color="error" />
-                        </IconButton>
-                      </Box>
-                    </TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
       ) : (
-        <Typography>No hay datos que mostrar</Typography>
+        <Typography variant="body1" sx={{ mt: 2 }}>
+          No hay datos que mostrar.
+        </Typography>
       )}
 
       <CreateProduct openCreate={openCreate} setOpenCreate={setOpenCreate} />
@@ -152,7 +168,6 @@ export default function TableProductos({ openCreate, setOpenCreate }) {
         product={product}
         setProduct={setProduct}
       />
-
       <EditProduct
         openEdit={openEdit}
         setOpenEdit={setOpenEdit}

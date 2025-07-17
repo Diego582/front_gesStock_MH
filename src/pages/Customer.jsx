@@ -145,9 +145,9 @@ const Customer = () => {
   return (
     <Box
       sx={{
-        m: 2,
+        px: { xs: 1, sm: 2 },
+        py: 2,
         width: "100%",
-        pr: { xs: 2, sm: 4, md: 6 },
         boxSizing: "border-box",
       }}
     >
