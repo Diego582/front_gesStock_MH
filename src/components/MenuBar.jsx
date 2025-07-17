@@ -13,10 +13,18 @@ import GroupIcon from "@mui/icons-material/Group";
 import FeedIcon from "@mui/icons-material/Feed";
 import ExitToAppIcon from "@mui/icons-material/ExitToApp";
 import WidgetsIcon from "@mui/icons-material/Widgets";
+import DashboardIcon from "@mui/icons-material/Dashboard";
 import { Link } from "react-router-dom";
 
 export default function MenuBar({ onClose }) {
-  const categories = ["Ventas", "Compras", "Clientes", "Productos", "Reportes"];
+  const categories = [
+    "Ventas",
+    "Compras",
+    "Clientes",
+    "Productos",
+    "Reportes",
+    "Dashboard",
+  ];
 
   return (
     <Box
@@ -47,8 +55,10 @@ export default function MenuBar({ onClose }) {
                       <WidgetsIcon sx={{ color: "white" }} />
                     ) : text === "Clientes" ? (
                       <GroupIcon sx={{ color: "white" }} />
-                    ) : (
+                    ) : text === "Reportes" ? (
                       <FeedIcon sx={{ color: "white" }} />
+                    ) : (
+                      <DashboardIcon sx={{ color: "white" }} />
                     )}
                   </ListItemIcon>
                 </Tooltip>
@@ -57,6 +67,7 @@ export default function MenuBar({ onClose }) {
           </ListItem>
         ))}
       </List>
+
       <List>
         <ListItem onClick={onClose}>
           <ListItemIcon sx={{ pt: 2, pb: 2 }}>

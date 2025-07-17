@@ -1,5 +1,4 @@
 import { createBrowserRouter } from "react-router-dom";
-import Typography from "@mui/material/Typography";
 import MainLayout from "./layouts/MainLayout";
 import SignIn from "./pages/SignIn";
 import Home from "./pages/Home";
@@ -12,6 +11,11 @@ import Private from "./utils/Private";
 import Check from "./pages/Check";
 import Invoice from "./pages/Invoice";
 import PrintTicket from "./pages/PrintTicket";
+import Dashboard from "./pages/Dashboard";
+import DashboardVentas from "./components/dashboard/DashboardVentas";
+import { DashboardStock } from "./components/dashboard/DashboardStock";
+import DashboardCompras from "./components/dashboard/DashboardCompras";
+import DashboardLayout from "./layouts/DashboardLayaout";
 
 const router = createBrowserRouter([
   {
@@ -49,6 +53,16 @@ const router = createBrowserRouter([
       {
         path: "/productos",
         element: <Products />,
+      },
+      {
+        path: "/dashboard",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <Dashboard /> }, // /dashboard
+          { path: "ventas", element: <DashboardVentas /> }, // /dashboard/ventas
+          { path: "stock", element: <DashboardStock /> }, // /dashboard/stock
+          { path: "compras", element: <DashboardCompras /> }, // /dashboard/compras
+        ],
       },
     ],
   },
