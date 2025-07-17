@@ -5,6 +5,8 @@ import {
   IconButton,
   Tooltip,
   Typography,
+  Stack,
+  Paper,
 } from "@mui/material";
 import NavSales from "../components/NavSales";
 import { useEffect, useState } from "react";
@@ -28,8 +30,6 @@ const { create_product_sale } = product_sale_actions;
 const Check = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const handleOpenCloseCreate = () => {};
-
   const [currentDate] = useState(new Date());
   const [total, setTotal] = useState(0);
   const [comprobante] = useState(0);
@@ -41,33 +41,6 @@ const Check = () => {
   );
   const checkLast = useSelector((store) => store.checks.checkLast);
   const customer = useSelector((store) => store.customers.customer);
-  const handlePostItem = () => {
-    /*   comprobantes.map((item) => {
-      dispatch(create_product_sale(item))
-        .then((res) => {
-          setIdComprobantes((prevArray) => [
-            ...prevArray,
-            res.payload.productSale._id,
-          ]);
-        })
-        .catch((err) => {});
-    });
-    Swal.fire({
-      title: "Confirma venta por Ticket?",
-      showDenyButton: true,
-      showCancelButton: true,
-      confirmButtonText: "Si",
-      denyButtonText: `No`,
-    }).then((result) => {
-     
-      if (result.isConfirmed) {
-        handlePost()
-        Swal.fire("Saved!", "", "success");
-      } else if (result.isDenied) {
-        Swal.fire("Changes are not saved", "", "info");
-      }
-    }); */
-  };
 
   const handlePost = () => {
     let itemPost = {
@@ -101,11 +74,11 @@ const Check = () => {
         }).then((result) => {
           if (result.isConfirmed) {
             navigate("/remitos/" + idPrint._id);
-            Swal.fire("se imrime el ticket", "", "info");
+            Swal.fire("Se imprime el ticket", "", "info");
           }
         });
       } else if (result.isDenied) {
-        Swal.fire("Changes are not saved", "", "info");
+        Swal.fire("Cambios no guardados", "", "info");
       }
     });
   };
@@ -121,36 +94,42 @@ const Check = () => {
   }, []);
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        width: "100%",
-        height: "90vh",
-      }}
-    >
+    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
       <NavSales />
 
-      <Box
+      <Paper
+        elevation={3}
         sx={{
+          bgcolor: "background.paper",
+          mx: 4,
+          my: 2,
+          p: 3,
+          borderRadius: 3,
           display: "flex",
-          justifyContent: "space-around",
+          justifyContent: "space-between",
           alignItems: "center",
           flexWrap: "wrap",
-          mt: 1,
-          mb: 1,
+          gap: 2,
         }}
       >
-        <Typography variant="h5">
-          Ticket N°: 1-
-          {checkLast && checkLast.comprobante ? checkLast.comprobante + 1 : 1}
+        <Stack direction="column" spacing={1}>
+          <Typography variant="h6" color="primary">
+            Ticket N°: 1-
+            {checkLast && checkLast.comprobante
+              ? checkLast.comprobante + 1
+              : 1}
+          </Typography>
+          <Typography variant="body1">
+            Fecha: {currentDate.getDate()}/{currentDate.getMonth() + 1}/
+            {currentDate.getFullYear()}
+          </Typography>
+        </Stack>
+
+        <Typography variant="h6" fontWeight="bold" color="success.main">
+          Monto: $ {total.toFixed(2)}
         </Typography>
-        <Typography variant="h5">
-          Fecha: {currentDate.getDate()}/{currentDate.getMonth() + 1}/
-          {currentDate.getFullYear()}
-        </Typography>
-        <Typography variant="h5">Monto: $ {total.toFixed(2)}</Typography>
-        <Box sx={{ display: "flex", justifyContent: "space-around" }}>
+
+        <Stack direction="row" spacing={2}>
           {comprobantes && comprobantes.length > 0 ? (
             <>
               <Tooltip title="Refrescar">
@@ -158,7 +137,7 @@ const Check = () => {
                   <RefreshIcon fontSize="large" />
                 </IconButton>
               </Tooltip>
-              <Tooltip title="Crear Imprimir">
+              <Tooltip title="Crear e Imprimir">
                 <IconButton onClick={handlePost}>
                   <SaveIcon fontSize="large" />
                 </IconButton>
@@ -174,12 +153,18 @@ const Check = () => {
               </IconButton>
             </>
           )}
-        </Box>
+        </Stack>
+      </Paper>
+
+      <Divider />
+      <Box sx={{ px: 4 }}>
+        <SelectCustomer />
       </Box>
       <Divider />
-      <SelectCustomer />
-      <Divider />
-      <TableSales total={total} setTotal={setTotal} />
+
+      <Box sx={{ px: 4, pt: 2 }}>
+        <TableSales total={total} setTotal={setTotal} />
+      </Box>
     </Box>
   );
 };
