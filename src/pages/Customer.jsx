@@ -1,4 +1,4 @@
-import React, { forwardRef, useContext, useEffect, useState } from "react";
+import React, { forwardRef, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Box,
@@ -14,6 +14,7 @@ import {
   IconButton,
   Paper,
   Tooltip,
+  Grid,
 } from "@mui/material";
 import { IMaskInput } from "react-imask";
 import FavoriteIcon from "@mui/icons-material/Favorite";
@@ -66,6 +67,8 @@ const Customer = () => {
     "Consumidor Final",
     "Exento",
   ];
+
+  // Manejo cambios en inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCliente((prevState) => ({
@@ -78,6 +81,7 @@ const Customer = () => {
     navigate("/remitos");
   };
 
+  // Enviar creación
   const handlePost = (cliente) => {
     dispatch(create_customer(cliente))
       .then((res) => {
@@ -89,17 +93,17 @@ const Customer = () => {
           setCliente({});
         } else if (res.payload.messages.length > 0) {
           Swal.fire({
-            title: "Something went wrong!",
+            title: "Algo salió mal!",
             icon: "error",
-            html: res.payload.messages.map((each) => `<p>${each}<p>`),
+            html: res.payload.messages.map((each) => `<p>${each}</p>`),
           });
         }
       })
-      .catch((err) => {});
-
+      .catch(() => {});
     handleOpenCloseCreate();
   };
 
+  // Filtro de clientes
   const handleFilter = (e) => {
     const { name, value } = e.target;
     setSearch((prevState) => ({
@@ -108,203 +112,217 @@ const Customer = () => {
     }));
   };
 
+  // Selección cliente para borrar
   const handleSelected = (cliente, option) => {
     setCliente(cliente);
-    option === "Edit" ? handleOpenCloseEdit() : handleOpenCloseDelete();
+    option === "Delete" ? handleOpenCloseDelete() : handleOpenCloseEdit(); // La edición no implementada
   };
 
   const handleOpenCloseDelete = () => {
     setOpenDelete(!openDelete);
   };
+
   const handleDelete = (cliente) => {
     dispatch(destroy_customer(cliente));
     setCliente({});
     handleOpenCloseDelete();
   };
 
-  const handleOpenCloseEdit = (cliente) => {};
+  // Edición placeholder
+  const handleOpenCloseEdit = () => {};
 
   const handleOpenCloseCreate = () => {
     setOpenCreate(!openCreate);
   };
+
   const handelSubmit = () => {};
 
+  // Carga inicial / búsqueda
   useEffect(() => {
     dispatch(read_customers(search));
-  }, [search]);
+  }, [search, dispatch]);
 
   return (
     <Box
       sx={{
-        justifyContent: "space-between",
         m: 2,
         width: "100%",
+        pr: { xs: 2, sm: 4, md: 6 },
+        boxSizing: "border-box",
       }}
     >
+      {/* Header con título y botones */}
       <Box
         sx={{
           display: "flex",
           justifyContent: "space-between",
           flexWrap: "wrap",
-          m: 1,
+          m: 2,
           p: 1,
+          alignItems: "center",
         }}
       >
-        <Typography variant="h4">Clientes</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Clientes
+        </Typography>
         <Box>
           <Tooltip title="Nuevo Cliente">
-            <IconButton onClick={handleOpenCloseCreate}>
+            <IconButton onClick={handleOpenCloseCreate} color="primary">
               <AddCircleIcon fontSize="large" />
             </IconButton>
           </Tooltip>
           <Tooltip title="Volver">
-            <IconButton onClick={handleReturn}>
+            <IconButton onClick={handleReturn} color="secondary">
               <KeyboardReturnIcon fontSize="large" />
             </IconButton>
           </Tooltip>
         </Box>
       </Box>
+
+      {/* Campo de búsqueda */}
       <TextField
         id="filled-search"
         label="Buscar Cliente por Apellido"
         type="search"
         variant="filled"
         name="lastName"
-        onKeyUp={handleFilter}
+        onChange={handleFilter}
         fullWidth
-        sx={{ mb: 2 }}
+        sx={{ mb: 3 }}
       />
 
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          gap: 2,
-          flexWrap: "wrap",
-        }}
-      >
+      {/* Lista de clientes */}
+      <Grid container spacing={2}>
         {customers &&
-          customers.map((item, index) => {
-            return (
+          customers.map((item, index) => (
+            <Grid item xs={12} sm={6} md={4} key={index}>
               <Paper
-                sx={{
-                  m: 1,
-                  width: 300,
-                  height: 175,
-                }}
                 elevation={5}
-                key={index}
+                sx={{
+                  height: 180,
+                  borderRadius: 3,
+                  display: "flex",
+                  flexDirection: "column",
+                }}
               >
-                <Card>
+                <Card
+                  sx={{
+                    flexGrow: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    p: 2,
+                  }}
+                  variant="outlined"
+                >
                   <CardContent>
-                    <Typography gutterBottom variant="h5" component="div">
-                      {item.lastName} , {item.name}
+                    <Typography
+                      variant="h6"
+                      component="div"
+                      sx={{ fontWeight: "bold" }}
+                      gutterBottom
+                    >
+                      {item.lastName}, {item.name}
                     </Typography>
-
-                    <Typography gutterBottom variant="body2" component="div">
-                      {item.cuit}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      CUIT: {item.cuit}
                     </Typography>
-                    <Typography gutterBottom variant="body2" component="div">
-                      {item.address}
+                    <Typography
+                      variant="body2"
+                      color="text.secondary"
+                      gutterBottom
+                    >
+                      Dirección: {item.address}
                     </Typography>
                   </CardContent>
-                  <CardActions
-                    sx={{ display: "flex", justifyContent: "space-around" }}
-                  >
+
+                  <CardActions sx={{ justifyContent: "space-around", pt: 0 }}>
                     <Tooltip title="Eliminar">
                       <IconButton
-                        aria-label="add to favorites"
                         onClick={() => handleSelected(item, "Delete")}
+                        color="error"
                       >
-                        <DeleteForeverIcon color="error" />
+                        <DeleteForeverIcon />
                       </IconButton>
                     </Tooltip>
 
                     <Tooltip title="Ingresar">
                       <Link to={"/comprobantes/" + item._id}>
-                        <IconButton aria-label="share">
-                          <DoubleArrowIcon color="info" />
+                        <IconButton color="info">
+                          <DoubleArrowIcon />
                         </IconButton>
                       </Link>
                     </Tooltip>
                   </CardActions>
                 </Card>
               </Paper>
-            );
-          })}
-      </Box>
+            </Grid>
+          ))}
+      </Grid>
 
-      {/* ESTE ES EL MODAL DE CREATE */}
-      <Modal open={openCreate} onClose={handleOpenCloseCreate}>
+      {/* Modal CREAR */}
+      <Modal
+        open={openCreate}
+        onClose={handleOpenCloseCreate}
+        aria-labelledby="modal-crear-cliente"
+        aria-describedby="modal-crear-cliente-description"
+      >
         <Box
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "75%",
-            height: "75%",
+            width: { xs: "90%", sm: 600 },
+            maxHeight: "90vh",
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            borderRadius: 3,
             boxShadow: 24,
             p: 4,
-            display: "grid",
-            alignContent: "space-around",
-            justifyItems: "center",
+            overflowY: "auto",
           }}
         >
           <ValidatorForm onSubmit={handelSubmit}>
-            <Typography variant="h4" color="secondary">
+            <Typography variant="h4" color="secondary" gutterBottom>
               Crear nuevo Cliente
             </Typography>
-            <Box sx={{ width: "100%", mt: 1, pt: 1 }}>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  m: 0.5,
-                  p: 0.5,
-                }}
-              >
-                <TextField
-                  autoFocus
-                  fullWidth
-                  name="name"
-                  label="Nombres"
-                  variant="filled"
-                  onChange={handleChange}
-                  sx={{ mr: 0.5 }}
-                />
-                <TextField
-                  name="lastName"
-                  fullWidth
-                  label="Apellidos"
-                  variant="filled"
-                  onChange={handleChange}
-                  sx={{ ml: 0.5 }}
-                />
-              </Box>
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-between",
-                  m: 0.5,
-                  p: 0.5,
-                }}
-              >
-                <TextField
-                  name="dni"
-                  fullWidth
-                  required
-                  label="D.N.I."
-                  variant="filled"
-                  onChange={handleChange}
-                  inputProps={{ maxLength: 8 }}
-                  sx={{ mr: 0.5 }}
-                />
-                <Box sx={{ width: "100%", ml: 0.5 }}>
+            <Box sx={{ width: "100%", mt: 2 }}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    autoFocus
+                    fullWidth
+                    name="name"
+                    label="Nombres"
+                    variant="filled"
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    name="lastName"
+                    fullWidth
+                    label="Apellidos"
+                    variant="filled"
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
+                  <TextField
+                    name="dni"
+                    fullWidth
+                    required
+                    label="D.N.I."
+                    variant="filled"
+                    onChange={handleChange}
+                    inputProps={{ maxLength: 8 }}
+                  />
+                </Grid>
+                <Grid item xs={12} sm={6}>
                   <TextValidator
                     name="cuit"
                     fullWidth
@@ -316,49 +334,49 @@ const Customer = () => {
                     onChange={handleChange}
                     inputProps={{ maxLength: 11 }}
                   />
-                </Box>
-              </Box>
-              <TextField
-                name="address"
-                fullWidth
-                label="Direccion"
-                variant="filled"
-                onChange={handleChange}
-                sx={{ m: 0.5, p: 0.5 }}
-              />
-
-              <TextField
-                select
-                name="condition"
-                fullWidth
-                label="Condicion"
-                variant="filled"
-                onChange={handleChange}
-                sx={{ m: 0.5, p: 0.5 }}
-                defaultValue=""
-                helperText="Por favor seleccione una Opcion"
-              >
-                {conditions.map((option, index) => (
-                  <MenuItem key={index} value={option}>
-                    {option}
-                  </MenuItem>
-                ))}
-              </TextField>
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    name="address"
+                    fullWidth
+                    label="Dirección"
+                    variant="filled"
+                    onChange={handleChange}
+                  />
+                </Grid>
+                <Grid item xs={12}>
+                  <TextField
+                    select
+                    name="condition"
+                    fullWidth
+                    label="Condición"
+                    variant="filled"
+                    onChange={handleChange}
+                    defaultValue=""
+                    helperText="Por favor seleccione una opción"
+                  >
+                    {conditions.map((option, index) => (
+                      <MenuItem key={index} value={option}>
+                        {option}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+              </Grid>
             </Box>
 
-            <Divider />
+            <Divider sx={{ my: 3 }} />
             <Box
               sx={{
-                width: "75%",
                 display: "flex",
-                justifyContent: "space-around",
+                justifyContent: "center",
+                gap: 2,
               }}
             >
               <Button
                 onClick={handleOpenCloseCreate}
                 variant="contained"
                 color="error"
-                sx={{ mr: 0.5, ml: 0.5 }}
               >
                 Cancelar
               </Button>
@@ -375,32 +393,32 @@ const Customer = () => {
         </Box>
       </Modal>
 
-      {/* ESTE ES EL MODAL DE DELETE */}
-      <Modal open={openDelete} onClose={handleOpenCloseDelete}>
+      {/* Modal ELIMINAR */}
+      <Modal
+        open={openDelete}
+        onClose={handleOpenCloseDelete}
+        aria-labelledby="modal-eliminar-cliente"
+        aria-describedby="modal-eliminar-cliente-description"
+      >
         <Box
-          component="form"
-          encType="multipart/form-data"
-          method="post"
           sx={{
             position: "absolute",
             top: "50%",
             left: "50%",
             transform: "translate(-50%, -50%)",
-            width: "75%",
-            height: "75%",
+            width: { xs: "90%", sm: 600 },
+            maxHeight: "80vh",
             bgcolor: "background.paper",
-            border: "2px solid #000",
+            borderRadius: 3,
             boxShadow: 24,
             p: 4,
-            display: "grid",
-            alignContent: "space-around",
-            justifyItems: "center",
+            overflowY: "auto",
           }}
         >
-          <Typography variant="h4" color="secondary">
-            Seguro que desea Eliminar este Cliente ??? No se puede revertir
+          <Typography variant="h4" color="secondary" gutterBottom>
+            ¿Seguro que desea eliminar este Cliente? No se puede revertir.
           </Typography>
-          <Box sx={{ width: "100%", mt: 1, pt: 1 }}>
+          <Box sx={{ mt: 2 }}>
             <TextField
               disabled
               fullWidth
@@ -408,48 +426,36 @@ const Customer = () => {
               label="Nombres"
               variant="filled"
               value={cliente && cliente.name}
-              onChange={handleChange}
-              sx={{ m: 0.5, p: 0.5 }}
+              sx={{ mb: 2 }}
             />
             <TextField
               disabled
-              name="apellido"
               fullWidth
+              name="apellido"
               label="Apellidos"
               variant="filled"
               value={cliente && cliente.lastName}
-              onChange={handleChange}
-              sx={{ m: 0.5, p: 0.5 }}
+              sx={{ mb: 2 }}
             />
             <TextField
               disabled
-              name="cuit"
-              required
               fullWidth
+              name="cuit"
               label="C.U.I.T"
               value={cliente && cliente.cuit}
               variant="filled"
-              onChange={handleChange}
               InputProps={{
                 inputComponent: TextMaskCustom,
               }}
-              sx={{ m: 0.5, p: 0.5 }}
             />
           </Box>
 
-          <Divider />
-          <Box
-            sx={{
-              width: "75%",
-              display: "flex",
-              justifyContent: "space-around",
-            }}
-          >
+          <Divider sx={{ my: 3 }} />
+          <Box sx={{ display: "flex", justifyContent: "center", gap: 2 }}>
             <Button
               onClick={handleOpenCloseDelete}
               variant="contained"
               color="success"
-              sx={{ mr: 0.5, ml: 0.5 }}
             >
               NO
             </Button>

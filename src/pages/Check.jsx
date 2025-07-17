@@ -94,7 +94,7 @@ const Check = () => {
   }, []);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+    <Box sx={{ display: "flex", flexDirection: "column", height: "82vh" }}>
       <NavSales />
 
       <Paper
