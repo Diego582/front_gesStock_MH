@@ -20,7 +20,6 @@ export default function SelectCustomer() {
   const [search, setSearch] = useState({ lastName: "" });
 
   const customer = useSelector((store) => store.customers.customer);
-
   const customers = useSelector((store) => store.customers.customers);
 
   const handleSelect = (id) => {
@@ -43,18 +42,17 @@ export default function SelectCustomer() {
         alignItems: "center",
         mt: 0.75,
         mb: 0.75,
-        pr: 10,
-        pl: 9,
+        px: 4,
+        flexWrap: "wrap",
+        gap: 2,
       }}
     >
-      <Typography
-        sx={{ mr: 1, ml: 1, textAlign: "center", minWidth: "100px" }}
-        variant="h5"
-      >
-        Cliente :
+      <Typography sx={{ minWidth: "100px" }} variant="h6">
+        Cliente:
       </Typography>
+
       <TextField
-        sx={{ minWidth: "200px", mr: 1, ml: 1 }}
+        sx={{ minWidth: "200px" }}
         variant="filled"
         label="DNI / CUIT"
         select
@@ -64,24 +62,37 @@ export default function SelectCustomer() {
           <MenuItem
             key={option._id}
             value={option.cuit}
-            onClick={() => {
-              handleSelect(option._id);
-            }}
+            onClick={() => handleSelect(option._id)}
           >
-            {option.lastName} , {option.name}
+            {option.lastName}, {option.name}
           </MenuItem>
         ))}
       </TextField>
-      <Typography
-        sx={{ mr: 1, ml: 1, textAlign: "left", width: "100%" }}
-        variant="h5"
-      >
-        {customer && customer.name} {customer && customer.lastName} - DNI :{" "}
-        {customer && customer.dni}
-      </Typography>
+
+      {customer && (
+        <Typography
+          sx={{
+            flexGrow: 1,
+            minWidth: "250px",
+            fontSize: "1rem",
+            textAlign: "left",
+          }}
+        >
+          {customer.name} {customer.lastName} - DNI: {customer.dni}
+        </Typography>
+      )}
+
       <Tooltip title="Agregar Cliente">
-        <IconButton onClick={handleCliente}>
-          <AddCircleIcon fontSize="large" />
+        <IconButton
+          onClick={handleCliente}
+          color="primary"
+          sx={{
+            backgroundColor: "#f5f5f5",
+            boxShadow: 1,
+            "&:hover": { backgroundColor: "#e0e0e0" },
+          }}
+        >
+          <AddCircleIcon />
         </IconButton>
       </Tooltip>
     </Box>
