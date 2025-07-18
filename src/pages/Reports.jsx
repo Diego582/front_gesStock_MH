@@ -1,100 +1,109 @@
-import { Box, Button, TextField } from "@mui/material";
-import Typography from "@mui/material/Typography";
-import { useState } from "react";
-import { useDispatch } from "react-redux";
-import products_actions from "../store/actions/products";
-import Swal from "sweetalert2";
+import {
+  Box,
+  Typography,
+  Grid,
+  Card,
+  CardContent,
+  CardActions,
+  Button,
+} from "@mui/material";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import StoreIcon from "@mui/icons-material/Store";
+import InventoryIcon from "@mui/icons-material/Inventory";
+import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 
-const { read_products } = products_actions;
 
-const Reports = () => {
-  const [openCreate, setOpenCreate] = useState(false);
-  const [search, setSearch] = useState({ codigoBarras: "" });
+export default function Reports() {
+  const navigate = useNavigate();
 
-  const dispatch = useDispatch();
 
-  const handleFilter = (e) => {
-    const { name, value } = e.target;
-    setSearch((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-  };
 
-  const handleEnterKey = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      dispatch(read_products(search))
-        .then((res) => {
-          if (res.payload.products) {
-            Swal.fire({
-              title: "Producto",
-              html: res.payload.products.map(
-                (each) =>
-                  `<p>${each.descripcion}  - $ : ${each.prices[0].value}</p>`
-              ),
-              icon: "info",
-            });
-          }
-        })
-        .catch((e) => {});
-    }
-  };
-
-  const handleOpenCloseCreate = () => {
-    setOpenCreate(!openCreate);
-  };
+  const reportOptions = [
+    {
+      title: "Reporte de Ventas",
+      description: "Emití un resumen detallado de las ventas.",
+      icon: <ShoppingCartIcon fontSize="large" />,
+      disabled: true,
+      path: "/ventas",
+    },
+    {
+      title: "Reporte de Compras",
+      description: "Revisá todas las compras realizadas.",
+      icon: <StoreIcon fontSize="large" />,
+      disabled: true,
+      path: "/compras",
+    },
+    {
+      title: "Reporte de Stock",
+      description: "Consultá el estado actual del inventario.",
+      icon: <InventoryIcon fontSize="large" />,
+      disabled: true,
+      path: "/stock",
+    },
+    {
+      title: "Consultas Personalizadas",
+      description: "Accedé a filtros avanzados y búsquedas.",
+      icon: <SearchIcon fontSize="large" color="primary" />,
+      disabled: false,
+      path: "/consultas",
+    },
+  ];
 
   return (
-    <>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "initial",
-          width: "100%",
-          height: "90vh",
-          pl: 5,
-          pr: 5,
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            flexWrap: "wrap",
-            mt: 1,
-            mb: 1,
-          }}
-        >
-          <Typography variant="h4" component="div">
-            Reportes
-          </Typography>
-        </Box>
-        <Box
-          sx={{
-            mt: 1,
-            mb: 1,
-          }}
-        >
-          <Typography variant="h5" component="div">
-            Consulta de Precios
-          </Typography>
-          <TextField
-            id="filled-search"
-            label="Carga de Código de Barras"
-            type="search"
-            variant="filled"
-            name="codigoBarras"
-            onChange={handleFilter}
-            onKeyDown={(event) => handleEnterKey(event)}
-            fullWidth
-            sx={{ m: 1 }}
-          />
-        </Box>
-      </Box>
-    </>
-  );
-};
+    <Box sx={{ p: 3 }}>
+      <Typography variant="h4" gutterBottom>
+        Panel de Reportes
+      </Typography>
 
-export default Reports;
+      <Grid container spacing={3}>
+        {reportOptions.map((report, index) => (
+          <Grid item xs={12} sm={6} md={4} lg={3} key={index}>
+            <Card
+              sx={{
+                height: "100%",
+                opacity: report.disabled ? 0.5 : 1,
+                pointerEvents: report.disabled ? "none" : "auto",
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "space-between",
+              }}
+              elevation={3}
+            >
+              <CardContent>
+                <Box
+                  sx={{
+                    mb: 1,
+                    color: report.disabled ? "text.disabled" : "primary.main",
+                  }}
+                >
+                  {report.icon}
+                </Box>
+                <Typography
+                  variant="h6"
+                  color={report.disabled ? "text.disabled" : "text.primary"}
+                >
+                  {report.title}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {report.description}
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Button
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  disabled={report.disabled}
+                  onClick={() => navigate(report.path)}
+                >
+                  Ver más
+                </Button>
+              </CardActions>
+            </Card>
+          </Grid>
+        ))}
+      </Grid>
+    </Box>
+  );
+}
