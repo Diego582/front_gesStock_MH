@@ -47,7 +47,7 @@ export default function CrudSales() {
 
       dispatch(read_products({ codigoBarras: codigoBarras }))
         .then((res) => {
-          console.log(res, "resuesta de la busqueda");
+     
           if (res.payload.products.length > 0) {
             const { descripcion, prices } = res.payload.products[0];
 
