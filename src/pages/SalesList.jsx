@@ -22,24 +22,38 @@ import { Download, Search } from "lucide-react";
 import * as XLSX from "xlsx";
 import check_actions from "../store/actions/check";
 import { useDispatch, useSelector } from "react-redux";
+import customer_actions from "../store/actions/customers";
+const { read_customers, read_customer } = customer_actions;
 const { read_checks } = check_actions;
 
 const SalesList = ({ sales }) => {
   const dispatch = useDispatch();
+  const [search, setSearch] = useState({ lastName: "" });
 
-  const [searchText, setSearchText] = useState("");
+  const [selectclient, setselectclient] = useState({ client_id: "" });
+
   //const [filterClient, setFilterClient] = useState("");
+  const customer = useSelector((store) => store.customers.customer);
+  const customers = useSelector((store) => store.customers.customers);
 
   const filteredSales = useSelector((store) => store.checks.checks);
 
-  /*   const filteredSales = useMemo(() => {
+  /*  const filteredSales = useMemo(() => {
     return sales.filter((sale) => {
       const clientName = `${sale.client_id.name} ${sale.client_id.lastName}`.toLowerCase();
       return clientName.includes(searchText.toLowerCase()) &&
         (filterClient ? sale.client_id._id === filterClient : true);
     });
   }, [sales, searchText, filterClient]);
-*/
+ */
+  const handleSelect = (id) => {
+    dispatch(read_customer({ _id: id })).then((res) => {
+      const newId = res.payload.customer._id;
+      if (selectclient.client_id !== newId) {
+        setselectclient({ client_id: newId });
+      }
+    });
+  };
   const exportToExcel = () => {
     const data = filteredSales.map((sale) => ({
       Comprobante: sale.comprobante,
@@ -57,9 +71,12 @@ const SalesList = ({ sales }) => {
   };
 
   useEffect(() => {
-    dispatch(read_checks());
+    dispatch(read_customers(search));
   }, []);
 
+  useEffect(() => {
+    dispatch(read_checks(selectclient));
+  }, [selectclient]);
   return (
     <Box p={2}>
       <Card className="shadow-xl rounded-2xl">
@@ -70,13 +87,22 @@ const SalesList = ({ sales }) => {
 
           <Box display="flex" flexWrap="wrap" gap={2} mb={2}>
             <TextField
-              label="Buscar por cliente"
+              sx={{ minWidth: "200px" }}
               variant="outlined"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-              InputProps={{ endAdornment: <Search size={18} /> }}
-            />
-
+              label="DNI / CUIT"
+              select
+              defaultValue=""
+            >
+              {customers.map((option) => (
+                <MenuItem
+                  key={option._id}
+                  value={option.cuit}
+                  onClick={() => handleSelect(option._id)}
+                >
+                  {option.lastName}, {option.name}
+                </MenuItem>
+              ))}
+            </TextField>
             <Button
               variant="contained"
               startIcon={<Download />}

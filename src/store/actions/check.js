@@ -7,7 +7,9 @@ const read_checks = createAsyncThunk("read_checks", async (obj) => {
 
   try {
 
-    let data = await axios(apiUrl + "checks");
+    let data = await axios(apiUrl + "checks?client_id=" + obj.client_id);
+
+
 
     return {
       checks: data.data.response,
