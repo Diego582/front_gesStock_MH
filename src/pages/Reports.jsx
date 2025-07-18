@@ -13,19 +13,16 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import SearchIcon from "@mui/icons-material/Search";
 import { useNavigate } from "react-router-dom";
 
-
 export default function Reports() {
   const navigate = useNavigate();
-
-
 
   const reportOptions = [
     {
       title: "Reporte de Ventas",
       description: "Emití un resumen detallado de las ventas.",
       icon: <ShoppingCartIcon fontSize="large" />,
-      disabled: true,
-      path: "/ventas",
+      disabled: false,
+      path: "/listadoventas",
     },
     {
       title: "Reporte de Compras",
