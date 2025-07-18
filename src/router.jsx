@@ -18,6 +18,7 @@ import DashboardCompras from "./components/dashboard/DashboardCompras";
 import DashboardLayout from "./layouts/DashboardLayaout";
 import GeneralQueries from "./pages/GeneralQueries";
 import ProductValueQuery from "./pages/ProductValueQuery";
+import SalesList from "./pages/SalesList";
 
 const router = createBrowserRouter([
   {
@@ -60,6 +61,10 @@ const router = createBrowserRouter([
       {
         path: "/buscarprecio",
         element: <ProductValueQuery />,
+      },
+      {
+        path: "/listadoventas",
+        element: <SalesList />,
       },
       {
         path: "/dashboard",
