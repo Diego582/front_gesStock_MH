@@ -16,6 +16,8 @@ import DashboardVentas from "./components/dashboard/DashboardVentas";
 import { DashboardStock } from "./components/dashboard/DashboardStock";
 import DashboardCompras from "./components/dashboard/DashboardCompras";
 import DashboardLayout from "./layouts/DashboardLayaout";
+import GeneralQueries from "./pages/GeneralQueries";
+import ProductValueQuery from "./pages/ProductValueQuery";
 
 const router = createBrowserRouter([
   {
@@ -50,9 +52,14 @@ const router = createBrowserRouter([
         path: "/reportes",
         element: <Reports />,
       },
+      { path: "/consultas", element: <GeneralQueries /> },
       {
         path: "/productos",
         element: <Products />,
+      },
+      {
+        path: "/buscarprecio",
+        element: <ProductValueQuery />,
       },
       {
         path: "/dashboard",
